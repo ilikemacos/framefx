@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Universal-FrameFX v1.4.1 Beta5: Real-time upscaler and frame generator for Windows</title>
+<meta name="description" content="Universal-FrameFX makes games and apps look sharper and play smoother: real-time upscaling, up to 4× frame generation and a click-through overlay. Free for Windows 10/11.">
+<meta name="keywords" content="Universal-FrameFX, FrameFX, CSR, Chopsticks Super Resolution, upscaler, frame generation, AMD FSR, Intel XeSS, overlay, Chopsticks HQ">
+<link rel="canonical" href="https://ilikemacos.github.io/framefx/">
+<meta property="og:title" content="Universal-FrameFX v1.4.1 Beta5">
+<meta property="og:description" content="Sharper, smoother games and apps on Windows: CSR (Chopsticks Super Resolution) upscaling and FrameFX frame generation, plus AMD FSR and Intel XeSS.">
+<meta property="og:url" content="https://ilikemacos.github.io/framefx/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://chopstickshq.com/universal-framefx/icon.png">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Universal-FrameFX v1.4.1 Beta5">
+<meta name="twitter:description" content="Real-time GPU window upscaling for Windows.">
+<link rel="icon" href="favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Universal-FrameFX","softwareVersion":"1.4.1-beta.5","operatingSystem":"Windows 10, Windows 11","applicationCategory":"MultimediaApplication","downloadUrl":"https://github.com/ilikemacos/universal-framefx/releases/download/v1.4.1-beta.5/Universal-FrameFX-1.4.1-beta.5-win-x64.zip","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"},"publisher":{"@type":"Organization","name":"Chopsticks HQ","url":"https://chopstickshq.com/"}}
+</script>
+<style>
+  :root {
+    --bg: #111111;
+    --fg: #ececec;
+    --muted: #9a9a9a;
+    --rule: #2a2a2a;
+    --border: #2a2a2a;
+    --accent: #ff6a2b;
+    --code: #181818;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 72px; color-scheme: dark; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--sans);
+    font-size: 17px;
+    line-height: 1.6;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+  }
+  img { display: block; }
+  h1, h2, h3, p, ul { margin: 0; }
+  button, summary { font: inherit; color: inherit; }
+  a:focus-visible, button:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  [hidden] { display: none !important; }
+  .wrap {
+    width: 100%;
+    max-width: 1120px;
+    margin: 0 auto;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+  .bar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: #111111;
+    border-bottom: 1px solid var(--rule);
+  }
+  .bar-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px 20px;
+    min-height: 56px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    color: inherit;
+    text-decoration: none;
+  }
+  .brand img { width: 24px; height: 24px; flex: none; }
+  .brand-text {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    column-gap: 8px;
+    row-gap: 0;
+    min-width: 0;
+  }
+  .brand-name { font-size: 15px; font-weight: 600; letter-spacing: -0.02em; }
+  .brand-by { font-size: 13px; font-weight: 400; color: var(--muted); }
+  .nav { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
+  .nav a {
+    color: var(--muted);
+    font-size: 15px;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .nav a:hover { color: var(--fg); text-decoration: none; }
+  .hero { padding-top: 56px; padding-bottom: 48px; }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 24px;
+  }
+  .hero-grid > :not(.sheet) {
+    grid-column: 1 / span 8;
+    min-width: 0;
+  }
+  .verline {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  h1 {
+    font-size: clamp(44px, 7.2vw, 84px);
+    font-weight: 600;
+    letter-spacing: -0.035em;
+    line-height: 1.02;
+    max-width: 9.25em;
+    color: #ececec;
+    text-wrap: balance;
+  }
+  .lede { margin-top: 20px; max-width: 38rem; }
+  .cta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 32px;
+  }
+  .os-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+    border-bottom: 1px solid var(--border);
+    width: 100%;
+    max-width: 38rem;
+  }
+  .os-tab {
+    background: transparent;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    padding: 0 0 8px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .os-tab:hover { color: var(--fg); }
+  .os-tab.active {
+    color: var(--fg);
+    border-bottom-color: var(--fg);
+  }
+  .os-panel { width: 100%; max-width: 38rem; }
+  .os-panel .dl { margin-top: 4px; }
+  .os-panel .file { margin-top: 12px; }
+  .dl {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 56px;
+    padding: 0 22px;
+    background: var(--accent);
+    color: #111111;
+    border-radius: 4px;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    text-decoration: none;
+    transition: background-color 120ms;
+  }
+  .dl:hover { background: #e85e24; color: #111111; text-decoration: none; }
+  .dl svg { flex: none; display: block; }
+  .file {
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+    max-width: 100%;
+  }
+  #ufx-dl-stat { font-size: 13px; color: var(--muted); }
+  #ufx-dl-stat:not([hidden]) { display: inline-block; }
+  #ufx-dl-stat strong { color: var(--fg); font-weight: 600; }
+  .follow { margin-top: 16px; font-size: 15px; }
+  .follow a, .body a, .sheet a, .hero .sha summary + code {
+    color: inherit;
+  }
+  .follow a, .body a, .sheet a {
+    text-decoration: underline;
+    text-decoration-color: #555;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+  }
+  .follow a:hover, .body a:hover, .sheet a:hover {
+    color: var(--accent);
+    text-decoration-color: var(--accent);
+  }
+  .sheet {
+    grid-column: 9 / span 4;
+    align-self: start;
+    display: grid;
+    grid-template-columns: 1fr;
+    align-content: start;
+    margin: calc(13px * 1.4 + 8px) 0 0;
+    min-width: 0;
+  }
+  .sheet > div {
+    padding: 12px 0;
+    border-top: 1px solid var(--rule);
+  }
+  .sheet > div:first-child { border-top: 0; padding-top: 0; }
+  .sheet > div:last-child { padding-bottom: 0; }
+  .sheet dt, .sheet dd { margin: 0; }
+  .sheet dt {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.4;
+    margin-bottom: 2px;
+  }
+  .sheet dd {
+    font-size: 15px;
+    line-height: 1.45;
+    color: var(--fg);
+  }
+  .sheet dd.mono { font-family: var(--mono); }
+  .sha { margin-top: 14px; }
+  .sha summary { cursor: pointer; color: var(--muted); font-size: 15px; }
+  .sha summary:hover { color: var(--fg); }
+  .sha code {
+    display: block;
+    margin-top: 8px;
+    max-width: 100%;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.45;
+    color: var(--muted);
+    word-break: break-all;
+  }
+  .band { border-top: 1px solid var(--rule); padding-top: 48px; padding-bottom: 48px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 24px;
+  }
+  .label {
+    grid-column: 1 / span 3;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    line-height: 1.4;
+  }
+  .body { grid-column: 4 / span 9; min-width: 0; }
+  .prose p + p { margin-top: 14px; }
+  .feats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 40px;
+  }
+  .feats article {
+    border-top: 1px solid var(--rule);
+    padding: 16px 0 18px;
+  }
+  .feats h3 {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .feats p { font-size: 15px; line-height: 1.55; color: var(--muted); }
+  .spec {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .spec th, .spec td {
+    text-align: left;
+    vertical-align: top;
+    padding: 12px 20px 12px 0;
+    border-bottom: 1px solid var(--rule);
+    font-weight: 400;
+  }
+  .spec th {
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .spec td:first-child { font-weight: 600; width: 7.5rem; }
+  .note { margin-top: 20px; }
+  .note + .note { margin-top: 14px; }
+  .stack > * + * { margin-top: 16px; }
+  .stack > h3 {
+    margin-top: 32px;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .cmd {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--code);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 10px 12px;
+    max-width: 100%;
+  }
+  .cmd .ps {
+    flex: none;
+    user-select: none;
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .cmd code {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--fg);
+  }
+  .cmd button {
+    flex: none;
+    background: transparent;
+    border: 0;
+    border-radius: 4px;
+    padding: 6px 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 120ms;
+  }
+  .cmd button:hover { background: #242424; }
+  .links { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 15px; }
+  .versions { list-style: none; padding: 0; }
+  .versions li { border-top: 1px solid var(--rule); padding: 12px 0; }
+  .versions a { font-weight: 500; }
+  .hash {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.45;
+  }
+  .stack code {
+    font-family: var(--mono);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+  }
+  .hash code, code.brk {
+    font-family: var(--mono);
+    font-size: 13px;
+    word-break: break-all;
+  }
+  .cmd code { word-break: normal; overflow-wrap: normal; }
+  .log-row {
+    display: grid;
+    grid-template-columns: 200px minmax(0, 1fr);
+    gap: 8px 24px;
+    border-top: 1px solid var(--rule);
+    padding: 16px 0;
+  }
+  .log-row:first-child { border-top: 0; padding-top: 0; }
+  .ver { font-family: var(--mono); font-size: 14px; font-weight: 500; }
+  .latest {
+    color: var(--accent);
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-left: 8px;
+  }
+  .log-meta time {
+    display: block;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  .log-row p { font-size: 15px; line-height: 1.55; }
+  .credits {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px 32px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .credits strong { font-weight: 600; }
+  .credits code { font-family: var(--mono); font-size: 13px; overflow-wrap: anywhere; }
+  footer { border-top: 1px solid var(--rule); }
+  .foot {
+    padding-top: 28px;
+    padding-bottom: 48px;
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .foot-links { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 10px; }
+  .foot a { color: var(--muted); text-decoration: none; }
+  .foot a:hover { color: var(--fg); text-decoration: none; }
+  .toast {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    z-index: 30;
+    background: #181818;
+    color: var(--fg);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    padding: 10px 14px;
+    font-size: 15px;
+  }
+  .toast:not(.show) { display: none; }
+  @media (max-width: 820px) {
+    .wrap { padding-left: 20px; padding-right: 20px; }
+    .nav-sec { display: none; }
+    .hero { padding-top: 36px; padding-bottom: 32px; }
+    .band { padding-top: 32px; padding-bottom: 32px; }
+    .label, .body { grid-column: 1 / -1; }
+    .label { margin-bottom: 20px; }
+    .feats, .credits { grid-template-columns: 1fr; }
+    .log-row { grid-template-columns: 1fr; }
+    .spec thead { display: none; }
+    .spec, .spec tbody, .spec tr, .spec td { display: block; width: auto; }
+    .spec tr { border-top: 1px solid var(--rule); padding: 14px 0; }
+    .spec td { border: 0; padding: 3px 0; width: auto; }
+    .spec td:first-child { font-size: 17px; padding-bottom: 6px; }
+    .spec td[data-label]::before {
+      content: attr(data-label);
+      display: block;
+      margin-bottom: 2px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .brand-text { flex-direction: column; align-items: flex-start; row-gap: 1px; }
+  }
+  @media (max-width: 979px) {
+    .hero-grid { display: flex; flex-direction: column; }
+    .sheet {
+      width: 100%;
+      margin-top: 32px;
+      grid-template-columns: 1fr 1fr;
+      column-gap: 24px;
+    }
+    .sheet > div:nth-child(2) { border-top: 0; padding-top: 0; }
+    .sheet > div:nth-child(5) { padding-bottom: 0; }
+    .sheet > div:nth-child(n+3) { border-top: 1px solid var(--rule); }
+  }
+  @media (max-width: 640px) {
+    .sheet { grid-template-columns: 1fr; }
+    .sheet > div:nth-child(2) { border-top: 1px solid var(--rule); padding-top: 12px; }
+    .sheet > div:nth-child(5) { padding-bottom: 12px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .dl, .cmd button { transition: none; }
+  }
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wrap bar-inner">
+    <a class="brand" href="./">
+      <img src="icon.png" alt="" width="24" height="24">
+      <span class="brand-text">
+        <span class="brand-name">Universal-FrameFX</span>
+        <span class="brand-by">by Chopsticks HQ</span>
+      </span>
+    </a>
+    <nav class="nav">
+      <a class="nav-sec" href="#features">Features</a>
+      <a class="nav-sec" href="#requirements">Requirements</a>
+      <a class="nav-sec" href="#install">Install</a>
+      <a class="nav-sec" href="#changelog">Changelog</a>
+      <a class="nav-dl" href="https://github.com/ilikemacos/universal-framefx/releases/download/v1.4.1-beta.5/Universal-FrameFX-1.4.1-beta.5-win-x64.zip">Download</a>
+    </nav>
+  </div>
+</header>
+<main>
+  <div class="hero">
+    <div class="wrap hero-grid">
+      <div>
+      <p class="verline" id="verline">Version 1.4.1 Beta5 for Windows 10 and 11</p>
+      <h1>Sharper picture. Smoother motion. Any window.</h1>
+      <p class="lede">Universal-FrameFX upscales any game or app to 1440p or 4K and adds up to four times the frames, shown right on top of the window you're using. It doesn't touch the game. It's free, and it doesn't phone home.</p>
+      <div class="cta">
+        <div class="os-tabs" role="tablist" aria-label="Choose your edition">
+          <button type="button" class="os-tab active" id="tab-windows" data-tab="windows" role="tab" aria-selected="true" aria-controls="panel-windows">Windows</button>
+          <button type="button" class="os-tab" id="tab-rog-ally" data-tab="rog-ally" role="tab" aria-selected="false" aria-controls="panel-rog-ally">ROG Ally</button>
+          <button type="button" class="os-tab" id="tab-steam-deck" data-tab="steam-deck" role="tab" aria-selected="false" aria-controls="panel-steam-deck">Steam Deck</button>
+        </div>
+        <div class="os-panel" id="panel-windows" data-panel="windows" role="tabpanel" aria-labelledby="tab-windows">
+          <a class="dl" href="https://github.com/ilikemacos/universal-framefx/releases/download/v1.4.1-beta.5/Universal-FrameFX-1.4.1-beta.5-win-x64.zip">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M8 1.75v8.5M4.25 7.25 8 11l3.75-3.75" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M2.75 13.25h10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+            Download for Windows
+          </a>
+          <p class="file">Universal-FrameFX-1.4.1-beta.5-win-x64.zip, 182 MB</p>
+          <details class="sha">
+            <summary>SHA-256</summary>
+            <code>713f2947b6286569b36fa0154107ab6ccfb307faf5548aa94f45b28a76229508</code>
+          </details>
+        </div>
+        <div class="os-panel" id="panel-rog-ally" data-panel="rog-ally" role="tabpanel" aria-labelledby="tab-rog-ally" hidden>
+          <a class="dl" id="rog-ally" href="https://github.com/ilikemacos/universal-framefx/releases/download/v1.4.1-beta.4/Universal-FrameFX-1.4.1-beta.4-rog-ally-win-x64.zip">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <path d="M8 1.75v8.5M4.25 7.25 8 11l3.75-3.75" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M2.75 13.25h10.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            </svg>
+            Download for ROG Ally / Ally X
+          </a>
+          <p class="file">Universal-FrameFX-1.4.1-beta.4-rog-ally-win-x64.zip, 182 MB. Ally-tuned defaults for Ally and Ally X. Still Windows.</p>
+          <details class="sha">
+            <summary>SHA-256</summary>
+            <code>7beb58fe5923075f7ccc12be9ccf693f183f4e947e7bfee0c4f64aad5880e389</code>
+          </details>
+        </div>
+        <div class="os-panel" id="panel-steam-deck" data-panel="steam-deck" role="tabpanel" aria-labelledby="tab-steam-deck" hidden>
+          <p><strong>Native SteamOS build — Preview 2.</strong> Runs directly on SteamOS, no Windows, no Proton, no Wine, no dual-boot. In Desktop Mode it upscales your screen (CSR 1.2, or the new CSR 2.0 option) and adds CSR 2.0 frame generation at 2× or 3× (4× when your refresh rate allows), which adds about one frame of latency. Game Mode isn't supported yet. This preview hasn't been tested on Steam Deck hardware yet.</p>
+          <a class="dl" href="https://chopstickshq-site.vercel.app/universal-framefx/Universal-FrameFX-1.4.0-steamos-preview.1-steam-deck-steamos-x86_64.AppImage">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M5 21h14"/></svg>
+            Download for SteamOS (Desktop Mode)
+          </a>
+          <p class="file">Universal-FrameFX-1.4.0-steamos-preview.1-steam-deck-steamos-x86_64.AppImage, 8.6 MB</p>
+          <details class="sha">
+            <summary>SHA-256</summary>
+            <code>6fc9d4f5d94ad7cbcb4833ee57e3eeeb881ca6144da08d02a3acaf50df57a671</code>
+          </details>
+          <p>To run: Desktop Mode → make the file executable (right-click → Properties → Permissions → &quot;Is executable&quot;, or <code>chmod +x</code> in Konsole) → double-click, or run it from Konsole. Pick a screen or window to upscale when prompted.</p>
+        </div>
+        <span id="ufx-dl-stat"><strong>3.4k</strong> downloads</span>
+      </div>
+      <p class="follow" id="os-follow"><a href="#install" id="os-follow-link">Or install with one line of PowerShell</a></p>
+      </div>
+      <dl class="sheet">
+        <div>
+          <dt>Latest</dt>
+          <dd class="mono" data-field="latest">1.4.1 Beta5</dd>
+        </div>
+        <div>
+          <dt data-field="released-label">Released</dt>
+          <dd data-field="released">October 11, 2026</dd>
+        </div>
+        <div>
+          <dt>Download</dt>
+          <dd class="mono" data-field="size">165 MB</dd>
+        </div>
+        <div>
+          <dt>Requires</dt>
+          <dd data-field="requires">Windows 10 (2004) or 11, x64</dd>
+        </div>
+        <div>
+          <dt>Price</dt>
+          <dd>Free, no account</dd>
+        </div>
+        <div>
+          <dt>Source</dt>
+          <dd data-field="source"><a href="https://github.com/ilikemacos/universal-framefx" target="_blank" rel="noopener">GitHub</a></dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+  <section class="band" id="new">
+    <div class="wrap grid">
+      <h2 class="label">New in 1.4.1 Beta5</h2>
+      <div class="body prose">
+        <p><strong>Sharper CSR Flux BETA.</strong> CSR Flux BETA has a new, sharper model at 2x/3x/4x.</p>
+        <p>Windows only. The ROG Ally / Ally X edition stays on Beta4. Beta5 includes everything in Beta4:</p>
+        <p><strong>CSR Flux is now CSR Flux BETA.</strong> The AI frame generation option on the Frame generation page is now labelled "CSR Flux BETA". CSR 1.3 stays the default.</p>
+        <p><strong>Reliability fix for CSR Flux BETA.</strong> It no longer quietly switches to CSR 2.0.</p>
+        <p>Also in this release, from Beta3:</p>
+        <p><strong>New app layout.</strong> A redesigned main window: a home page that shows what's running at a glance, and separate pages for Upscaling, Frame generation, Games, CPU, Advanced and About.</p>
+        <p><strong>CSR Flux BETA.</strong> A new AI frame generation option in the Frame generation menu, next to CSR 1.3 and CSR 2.0. CSR 1.3 stays the default.</p>
+        <p><strong>CSR AI (experimental) upscaler.</strong> A new AI upscaling option in the Upscaling menu. It's experimental; CSR 1.3 stays the default.</p>
+        <p><strong>Fix for CSR 2.0 low-latency mode.</strong> With low-latency mode or the Competitive preset on, CSR 2.0 now adds generated frames as it should.</p>
+        <p>And from Beta2:</p>
+        <p><strong>Anti-cheat safe mode.</strong> FrameFX recognizes games protected by anti-cheat (EasyAntiCheat, BattlEye, Riot Vanguard, FACEIT, Ricochet and others) and keeps itself in a safe state for them: it only captures the game's window, never touches the game, and leaves out CPU options that would change the game's priority or cores. "Anti-cheat safe mode" shows next to the game and in the overlay, and the Games page has the list of protected games, where you can add your own or mark a game as not protected.</p>
+        <p><strong>CSR 2.0 upscaler.</strong> A new CSR 2.0 option in the Upscaling menu next to CSR 1.3, with the same presets and sharpness slider. CSR 1.3 stays the default.</p>
+        <p><strong>Steam Deck.</strong> SteamOS Preview 2 brings CSR 2.0 frame generation and a CSR 2.0 upscaler option to Desktop Mode.</p>
+        <p>And from Beta1:</p>
+        <p><strong>CSR 2.0 in the frame generation menu.</strong> Settings → Frame generation now lists Off, CSR 1.3, CSR 2.0 and AMD FSR 3, with CSR 2.0's own options shown right below it. CSR 1.3 stays the default.</p>
+        <p><strong>Up to 20×.</strong> With CSR 2.0 you can pick 2× up to 20×. Output never goes above your refresh rate, so the high multipliers are for high-refresh displays (20× is meant for 360 Hz and up).</p>
+        <p><strong>Smoother pacing, sharper HUD and cursor.</strong> Generated frames are timed to your display, and your HUD and cursor stay crisp on them.</p>
+        <p>In both the Windows and ROG Ally / Ally X editions. Includes Beta7, Beta6 and Beta5: the CPU tab and ray-traced lighting.</p>
+        <p><strong>CPU tab.</strong> High-performance power mode, priority and the fastest cores for the game, with background apps you choose kept out of the way. Off by default, undone when the game closes, with a quick before/after benchmark.</p>
+        <p><strong>Ray-traced lighting.</strong> Brighter and more natural, and it runs lighter on GTX 1050 Ti-class cards.</p>
+        <p>Separate ROG Ally / Ally X and Steam Deck editions are available. The Steam Deck tab is a native SteamOS preview (Desktop Mode).</p>
+        <p>Beta4 added per-game profiles, Ctrl+Alt+C compare and a steadier SSGI option.</p>
+      </div>
+    </div>
+  </section>
+  <section class="band" id="features">
+    <div class="wrap grid">
+      <h2 class="label">Features</h2>
+      <div class="body">
+        <div class="feats">
+          <article>
+            <h3>Frame generation up to 4×</h3>
+            <p>Choose 2×, 3× or 4×, or 8× if you want it, and up to 20× with CSR 2.0; it never goes above your refresh rate, and it backs off if the game would slow down.</p>
+          </article>
+          <article>
+            <h3>Upscaling to 1440p or 4K</h3>
+            <p>AMD FSR 1–4, Intel XeSS, or CSR (Chopsticks Super Resolution), our own; FSR 4 needs a Radeon RX 9000.</p>
+          </article>
+          <article>
+            <h3>Works on any window</h3>
+            <p>Pick a game or app and press Start; nothing in the game changes.</p>
+          </article>
+          <article>
+            <h3>Click-through overlay</h3>
+            <p>It sits exactly over the window and follows it; Ctrl+Alt+F hides it, Ctrl+Alt+Q stops it, and Ctrl+Alt+C toggles it to compare.</p>
+          </article>
+          <article>
+            <h3>Competitive mode</h3>
+            <p>One click for the most fps and the least delay, with the latency budget on by default.</p>
+          </article>
+          <article>
+            <h3>Per-game profiles</h3>
+            <p>Each game remembers its preset, frame generation, lighting, upscaler and output resolution.</p>
+          </article>
+          <article>
+            <h3>CPU tab</h3>
+            <p>High-performance power mode, priority and the fastest cores for the game, with background apps you choose kept out of the way; off by default, undone when the game closes, with a quick before/after benchmark.</p>
+          </article>
+          <article>
+            <h3>Ray-traced lighting, experimental</h3>
+            <p>Extra light, reflections and contact shadows, even on a GTX 1050 Ti or 980 Ti, and off by default.</p>
+          </article>
+          <article>
+            <h3>Games only</h3>
+            <p>It runs only while a game is in front, and pauses when you alt-tab.</p>
+          </article>
+          <article>
+            <h3>Prefers the fast GPU</h3>
+            <p>On a laptop it picks the dedicated GPU, or you choose which one.</p>
+          </article>
+          <article>
+            <h3>Automatic updates</h3>
+            <p>It checks, verifies each download, and rolls back if an update doesn't start.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="band" id="requirements">
+    <div class="wrap grid">
+      <h2 class="label">Requirements</h2>
+      <div class="body">
+        <table class="spec">
+          <thead>
+            <tr>
+              <th>Component</th>
+              <th>Minimum</th>
+              <th>Recommended</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Windows</td>
+              <td data-label="Minimum:">Windows 10 version 2004 (build 19041), 64-bit</td>
+              <td data-label="Recommended:">Windows 11 (tested on build 26200)</td>
+            </tr>
+            <tr>
+              <td>GPU</td>
+              <td data-label="Minimum:">Direct3D 11 (feature level 11_0) integrated GPU. Vendor upscalers need Direct3D 12 (FSR 4: Radeon RX 9000)</td>
+              <td data-label="Recommended:">Discrete GPU, e.g. RTX 3060 Laptop, for 1440p at 60 fps; 4K works with lower headroom</td>
+            </tr>
+            <tr>
+              <td>Processor</td>
+              <td data-label="Minimum:">Any x64 CPU</td>
+              <td data-label="Recommended:">Arm64 Windows is not built (x64 only)</td>
+            </tr>
+            <tr>
+              <td>Storage</td>
+              <td data-label="Minimum:">200 MB free</td>
+              <td data-label="Recommended:">400 MB free for updates</td>
+            </tr>
+            <tr>
+              <td>Runtime</td>
+              <td data-label="Minimum:">None (.NET 8 is bundled)</td>
+              <td data-label="Recommended:">None</td>
+            </tr>
+            <tr>
+              <td>Display</td>
+              <td data-label="Minimum:">Any monitor</td>
+              <td data-label="Recommended:">1440p or 4K panel to see the upscale at 1:1</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="note">Run your game in Windowed Fullscreen (borderless) so FrameFX can appear over it. With output resolution Auto or Source the overlay covers the window at its own size; at 1440p or 4K it covers the window's monitor.</p>
+        <p class="note">Free, and no account needed. No telemetry: only the update check, and downloads you approve, leave your PC. The download is 165 MB. .NET 8 is included.</p>
+        <p class="note">Steam Deck: native SteamOS preview (Desktop Mode) with upscaling and CSR 2.0 frame generation. Game Mode is not available yet on SteamOS.</p>
+      </div>
+    </div>
+  </section>
+  <section class="band" id="install">
+    <div class="wrap grid">
+      <h2 class="label">Install</h2>
+      <div class="body stack">
+        <p>Paste this into PowerShell. No admin rights needed.</p>
+        <div class="cmd">
+          <span class="ps">PS&gt;</span>
+          <code id="cmd">irm https://chopstickshq.com/universal-framefx/install.ps1 | iex</code>
+          <button type="button" onclick="copyCmd('cmd')">Copy</button>
+        </div>
+        <h3>Uninstall</h3>
+        <div class="cmd">
+          <span class="ps">PS&gt;</span>
+          <code id="cmd2">&amp; ([scriptblock]::Create((irm https://chopstickshq.com/universal-framefx/install.ps1))) -Uninstall</code>
+          <button type="button" onclick="copyCmd('cmd2')">Copy</button>
+        </div>
+        <p class="links">
+          <a href="https://github.com/ilikemacos/universal-framefx/releases/download/v1.4.1-beta.5/Universal-FrameFX-1.4.1-beta.5-win-x64.zip">Download the .zip (182 MB)</a>
+          <a href="https://github.com/ilikemacos/universal-framefx/releases/download/v1.4.1-beta.4/Universal-FrameFX-1.4.1-beta.4-rog-ally-win-x64.zip">Download for ROG Ally / Ally X (.zip, 182 MB)</a>
+          <a href="https://chopstickshq-site.vercel.app/universal-framefx/Universal-FrameFX-1.4.0-steamos-preview.1-steam-deck-steamos-x86_64.AppImage">Download for SteamOS (Desktop Mode) (.AppImage, 8.6 MB)</a>
+          <a href="https://github.com/ilikemacos/universal-framefx" target="_blank" rel="noopener">Source on GitHub</a>
+        </p>
+        
+        <p>The exe isn't code-signed yet, so Windows SmartScreen may warn the first time you open it. Click "More info", then "Run anyway".</p>
+        <h3>Previous versions</h3>
+        <ul class="versions">
+          <li>
+            <a href="https://github.com/ilikemacos/universal-framefx/releases/download/v1.4.1-beta.4/Universal-FrameFX-1.4.1-beta.4-win-x64.zip">Universal-FrameFX 1.4.1 Beta4 (.zip)</a>
+            <span class="hash">SHA-256 <code>e4478c55f997b6adcfc337e246f2967c5489471a8fd083d0f1e6faf470c4c1ef</code></span>
+          </li>
+          <li>
+            <a href="https://github.com/ilikemacos/universal-framefx/releases/download/v1.4.0-beta.5/Universal-FrameFX-1.4.0-beta.5-win-x64.zip">Universal-FrameFX 1.4.0 Beta5 (.zip)</a>
+            <span class="hash">SHA-256 <code>829afc9441b8e03a6a422803b4bccd524f938772c5c1b39100ae6bd48f611b91</code></span>
+          </li>
+          <li>
+            <a href="https://github.com/ilikemacos/universal-framefx/releases/download/v1.4.0-beta.4/Universal-FrameFX-1.4.0-beta.4-win-x64.zip">Universal-FrameFX 1.4.0 Beta4 (.zip)</a>
+            <span class="hash">SHA-256 <code>e1172a249005a04852c429d9666e44233d01878ea39762d3c6a69a05f7bbaf8f</code></span>
+          </li>
+          <li>
+            <a href="https://github.com/ilikemacos/universal-framefx/releases/download/v1.4.0-beta.2/Universal-FrameFX-1.4.0-beta.2-win-x64.zip">Universal-FrameFX 1.4.0 Beta2 (.zip)</a>
+            <span class="hash">SHA-256 <code>8c309a314727f3c60a66e33237b8d8d0651a64053f4831caef5635325bfc1044</code></span>
+          </li>
+          <li>
+            <a href="https://github.com/ilikemacos/universal-framefx/releases/download/v1.3.1/Universal-FrameFX-1.3.1-win-x64.zip">Universal-FrameFX 1.3.1 (.zip)</a>
+            <span class="hash">SHA-256 <code>8d46d83ac78f2c1a0763e54c453ae3fef48c32057b615b751a4972b599e2eb75</code></span>
+          </li>
+          <li>
+            <a href="https://chopstickshq-site.vercel.app/universal-framefx/Universal-FrameFX-1.2-win-x64.zip">Universal-FrameFX 1.2 (.zip)</a>
+            <span class="hash">SHA-256 <code>9ca33be68a9824ddb8c8070ce7aff7d02afe4d5c6c6303cfae499b498dc899c2</code></span>
+          </li>
+          <li>
+            <a href="https://chopstickshq-site.vercel.app/universal-framefx/Universal-FrameFX-1.1-win-x64.zip">Universal-FrameFX 1.1 (.zip)</a>
+            <span class="hash">SHA-256 <code>84302812a32790709d95b47ff794f16a5f21b286af062e05c148e85b310838c5</code></span>
+          </li>
+        </ul>
+        <p>Install one with <code>&amp; ([scriptblock]::Create((irm https://chopstickshq.com/universal-framefx/install.ps1))) -Version 1.3.1</code> (or <code>-Version 1.2</code>, <code>-Version 1.1</code>).</p>
+        <p>The Windows app is open source (MIT) on <a href="https://github.com/ilikemacos/universal-framefx" target="_blank" rel="noopener">GitHub</a>, so you can check exactly what it does on your PC.</p>
+      </div>
+    </div>
+  </section>
+  <section class="band" id="changelog">
+    <div class="wrap grid">
+      <h2 class="label">Changelog</h2>
+      <div class="body">
+        <article class="log-row">
+          <div class="log-meta">
+            <span class="ver">v1.4.1 Beta5 <span class="latest">Latest</span></span>
+            <time datetime="2026-10-11">October 11, 2026</time>
+          </div>
+          <p>CSR Flux BETA has a new, sharper model at 2x/3x/4x. Includes everything in Beta4. Windows only; the ROG Ally / Ally X edition stays on Beta4. The Steam Deck preview is unchanged.</p>
+        </article>
+        <article class="log-row">
+          <div class="log-meta">
+            <span class="ver">v1.4.1 Beta4</span>
+            <time datetime="2026-10-11">October 11, 2026</time>
+          </div>
+          <p>CSR Flux is now called CSR Flux BETA, and a reliability fix so it no longer quietly switches to CSR 2.0. Windows and ROG Ally / Ally X editions. The Steam Deck preview is unchanged.</p>
+        </article>
+        <article class="log-row">
+          <div class="log-meta">
+            <span class="ver">v1.4.1 Beta3</span>
+            <time datetime="2026-10-10">October 10, 2026</time>
+          </div>
+          <p>A new app layout, CSR Flux (AI, experimental) frame generation, a CSR AI (experimental) upscaler option, and a fix for CSR 2.0 low-latency mode. Windows and ROG Ally / Ally X editions. The Steam Deck preview is unchanged.</p>
+        </article>
+        <article class="log-row">
+          <div class="log-meta">
+            <span class="ver">v1.4.1 Beta2</span>
+            <time datetime="2026-10-10">October 10, 2026</time>
+          </div>
+          <p>Anti-cheat safe mode for games protected by anti-cheat, and a new CSR 2.0 option in the Upscaling menu. Windows and ROG Ally / Ally X editions. Steam Deck: SteamOS Preview 2 adds CSR 2.0 frame generation and a CSR 2.0 upscaler option in Desktop Mode.</p>
+        </article>
+        <article class="log-row">
+          <div class="log-meta">
+            <span class="ver">v1.4.1 Beta1</span>
+            <time datetime="2026-10-10">October 10, 2026</time>
+          </div>
+          <p>CSR 2.0 frame generation is now in the main frame generation menu, up to 20× on high-refresh displays, smoother frame pacing, and a sharper HUD and cursor on generated frames. Windows and ROG Ally / Ally X editions. The Steam Deck preview is unchanged.</p>
+        </article>
+        <article class="log-row">
+          <div class="log-meta">
+            <span class="ver">v1.4.0 Beta7</span>
+            <time datetime="2026-10-09">October 9, 2026</time>
+          </div>
+          <p>CSR 2.0 frame generation (experimental, off by default): smoother frame generation, better fast motion, sharp HUD and cursor, an Auto multiplier and a low-latency mode for competitive games. Windows and ROG Ally / Ally X editions. The Steam Deck preview is unchanged.</p>
+        </article>
+        <article class="log-row">
+          <div class="log-meta">
+            <span class="ver">v1.4.0 Beta6</span>
+            <time datetime="2026-10-06">October 6, 2026</time>
+          </div>
+          <p>Maintenance release (Windows). Includes Beta5 CPU section and ray-traced lighting. Separate ROG Ally / Ally X edition available. Steam Deck: native SteamOS preview build available (Desktop Mode, upscaling only — see the Steam Deck tab).</p>
+        </article>
+        <article class="log-row">
+          <div class="log-meta">
+            <span class="ver">v1.4.0 Beta5</span>
+            <time datetime="2026-10-04">October 4, 2026</time>
+          </div>
+          <p>New CPU section (off by default, per game) with a quick before/after benchmark. Brighter, more natural ray-traced lighting that runs lighter on GTX 1050 Ti-class cards.</p>
+        </article>
+        <article class="log-row">
+          <div class="log-meta">
+            <span class="ver">v1.4.0 Beta4</span>
+            <time datetime="2026-10-04">October 4, 2026</time>
+          </div>
+          <p>Ray-traced lighting (experimental, off by default): extra light, reflections and contact shadows, including on cards without hardware ray tracing such as the GTX 1050 Ti and GTX 980 Ti. Per-game profiles. Compare with Ctrl+Alt+C. Steadier SSGI lighting option.</p>
+        </article>
+        <article class="log-row">
+          <div class="log-meta">
+            <span class="ver">v1.4.0 Beta2</span>
+            <time datetime="2026-10-03">October 3, 2026</time>
+          </div>
+          <p>FrameFX output fps shown next to the game's fps. Warning when the game is in exclusive fullscreen. Hint when a laptop power mode locks the game at 40 or 30 fps. Faster first launch.</p>
+        </article>
+        <article class="log-row">
+          <div class="log-meta">
+            <span class="ver">1.4.0</span>
+            <time datetime="2026-10-03">October 3, 2026</time>
+          </div>
+          <p>Frame generation at 2×/3×/4× (4× default, 8× advanced). Smoother generated frames on fast pans and flicks. Competitive preset. Latency budget, on by default. SSGI (experimental, off by default).</p>
+        </article>
+        <article class="log-row">
+          <div class="log-meta">
+            <span class="ver">1.3.2</span>
+            <time datetime="2026-09-30">September 30, 2026</time>
+          </div>
+          <p>Apply to games only (on by default): FrameFX runs only while a game is in front and pauses when you alt-tab.</p>
+        </article>
+        <article class="log-row">
+          <div class="log-meta">
+            <span class="ver">1.3.1</span>
+            <time datetime="2026-09-26">September 26, 2026</time>
+          </div>
+          <p>Performance preset (new default), about 1 ms per frame on a laptop GPU. Automatic updates.</p>
+        </article>
+        <article class="log-row">
+          <div class="log-meta">
+            <span class="ver">1.3</span>
+            <time datetime="2026-09-26">September 26, 2026</time>
+          </div>
+          <p>AMD FSR 1–3, AMD FSR 4 on RX 9000 and Intel XeSS. AMD FSR 3 frame generation. 1440p and 4K output.</p>
+        </article>
+        <article class="log-row">
+          <div class="log-meta">
+            <span class="ver">1.2</span>
+            <time datetime="2026-09-26">September 26, 2026</time>
+          </div>
+          <p>Sharper text and UI, better frame generation, click-through overlay, new dark UI.</p>
+        </article>
+        <article class="log-row">
+          <div class="log-meta">
+            <span class="ver">1.1</span>
+            <time datetime="2026-09-26">September 26, 2026</time>
+          </div>
+          <p>First native Windows app with upscaling, frame generation, a GPU self-test and a one-line installer.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+  <section class="band" id="credits">
+    <div class="wrap grid">
+      <h2 class="label">Credits</h2>
+      <div class="body credits">
+        <p><strong>Vortice.Windows · .NET.</strong> Vortice.Windows by Amer Koleci and contributors (MIT); .NET runtime and Windows Forms by the .NET Foundation (MIT).</p>
+        <p><strong>NVIDIA.</strong> NVIDIA: on NVIDIA GPUs the runtime that ships with the NVIDIA driver is used (interface from NVIDIA's MIT-licensed headers; nothing from NVIDIA is bundled).</p>
+        <p><strong>AMD FidelityFX.</strong> AMD FSR 1 and the FidelityFX SDK 1.1.4 runtime (FSR 2, FSR 3, FSR 3 frame generation) under the MIT licence; CSR contains MIT-licensed code portions © AMD; the FidelityFX SDK 2.3 runtime (FSR 4) under AMD's binary redistribution licence. © Advanced Micro Devices, Inc. AMD, Radeon and FidelityFX are trademarks of AMD. Not an AMD product.</p>
+        <p><strong>Intel XeSS.</strong> The Intel XeSS SDK 3.0.2 runtime (<code>libxess.dll</code>), redistributed unmodified under the Intel Simplified Software License. © Intel Corporation. Intel, Arc and XeSS are trademarks of Intel. Not an Intel product.</p>
+        <p><strong>Full notices.</strong> Third-party licenses ship in <code>NOTICE.md</code> and the <code>licenses</code> folder inside the zip, and in the app's About dialog.</p>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>
+  <div class="wrap foot">
+    <p>FrameFX 2026© · ChopsticksHQ 2026©. Includes AMD FidelityFX and Intel XeSS components under their licences.</p>
+    <p class="foot-links">
+      <a href="https://chopstickshq.com/">chopstickshq.com</a>
+      <a href="https://github.com/ilikemacos/universal-framefx" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/ilikemacos/universal-framefx/releases" target="_blank" rel="noopener">All releases</a>
+      <a href="https://buymeacoffee.com/chopstickshq" target="_blank" rel="noopener noreferrer">Buy Me a Coffee</a>
+    </p>
+  </div>
+</footer>
+<div class="toast" id="toast" role="status">Copied</div>
+<script>
+function toast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function () { t.classList.remove('show'); }, 2000);
+}
+var EDITIONS = {
+  windows: {
+    verline: 'Version 1.4.1 Beta5 for Windows 10 and 11',
+    latest: '1.4.1 Beta5',
+    releasedLabel: 'Released',
+    released: 'October 11, 2026',
+    size: '182 MB',
+    requires: 'Windows 10 (2004) or 11, x64',
+    sourceText: 'GitHub'
+  },
+  'rog-ally': {
+    verline: 'Version 1.4.1 Beta4 for ROG Ally and Ally X',
+    latest: '1.4.1 Beta4 (ROG Ally)',
+    releasedLabel: 'Released',
+    released: 'October 10, 2026',
+    size: '182 MB',
+    requires: 'ROG Ally or Ally X, Windows 10 (2004) or 11',
+    sourceText: 'GitHub'
+  },
+  'steam-deck': {
+    verline: 'SteamOS Preview 2 for Steam Deck, Desktop Mode',
+    latest: '1.4.1 SteamOS Preview 2',
+    releasedLabel: 'Status',
+    released: 'Preview, Desktop Mode only',
+    size: '8.6 MB',
+    requires: 'Steam Deck, SteamOS in Desktop Mode',
+    sourceText: 'GitHub'
+  }
+};
+function setEdition(tab) {
+  document.querySelectorAll('.os-tab').forEach(function (b) {
+    var on = b.dataset.tab === tab;
+    b.classList.toggle('active', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+  document.querySelectorAll('.os-panel').forEach(function (p) {
+    p.hidden = p.dataset.panel !== tab;
+  });
+  var follow = document.getElementById('os-follow');
+  var link = document.getElementById('os-follow-link');
+  if (follow && link) {
+    if (tab === 'steam-deck') {
+      follow.hidden = true;
+    } else {
+      follow.hidden = false;
+      link.textContent = 'Or install with one line of PowerShell';
+      link.setAttribute('href', '#install');
+    }
+  }
+  var e = EDITIONS[tab];
+  if (!e) return;
+  var verline = document.getElementById('verline');
+  if (verline) verline.textContent = e.verline;
+  var latest = document.querySelector('dd[data-field="latest"]');
+  if (latest) latest.textContent = e.latest;
+  var releasedLabel = document.querySelector('dt[data-field="released-label"]');
+  if (releasedLabel) releasedLabel.textContent = e.releasedLabel;
+  var released = document.querySelector('dd[data-field="released"]');
+  if (released) released.textContent = e.released;
+  var size = document.querySelector('dd[data-field="size"]');
+  if (size) size.textContent = e.size;
+  var requires = document.querySelector('dd[data-field="requires"]');
+  if (requires) requires.textContent = e.requires;
+  var source = document.querySelector('dd[data-field="source"]');
+  if (source && source.querySelectorAll('a').length === 1) {
+    var sourceLink = source.querySelector('a');
+    if (sourceLink) sourceLink.textContent = e.sourceText;
+  }
+}
+document.querySelectorAll('.os-tab').forEach(function (btn) {
+  btn.addEventListener('click', function () { setEdition(btn.dataset.tab); });
+});
+function copyCmd(id) {
+  var text = document.getElementById(id).textContent;
+  var btn = document.activeElement;
+  if (!btn || btn.tagName !== 'BUTTON') {
+    var codeEl = document.getElementById(id);
+    var parent = codeEl && codeEl.parentElement;
+    btn = parent ? parent.querySelector('button') : null;
+  }
+  navigator.clipboard.writeText(text).then(function () {
+    toast('Copied');
+    if (!btn) return;
+    if (!btn.dataset.label) btn.dataset.label = 'Copy';
+    if (btn._t) clearTimeout(btn._t);
+    btn.textContent = 'Copied';
+    btn._t = setTimeout(function () {
+      btn.textContent = btn.dataset.label;
+    }, 1500);
+  }, function () { toast('Copy failed'); });
+}
+</script>
+</body>
+</html>
