@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>WyneAI: the assistant in Universal-FrameFX</title>
-<meta name="description" content="WyneAI is the assistant built into Universal-FrameFX. Chat about anything, set up games, and let it run FrameFX for you, right on your PC.">
+<title>WrenbyAI: the assistant in Universal-FrameFX</title>
+<meta name="description" content="WrenbyAI is the assistant built into Universal-FrameFX. Chat about anything, set up games, and let it run FrameFX for you, right on your PC.">
 <link rel="canonical" href="https://ilikemacos.github.io/framefx/wyneai/">
 <link rel="icon" href="../favicon.ico" sizes="any">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon.png">
@@ -504,7 +504,7 @@
     <nav class="nav">
       <a class="nav-sec" href="../#features">Features</a>
       <a class="nav-sec" href="../#install">Install</a>
-      <a class="nav-sec" href="./">WyneAI</a>
+      <a class="nav-sec" href="./">WrenbyAI</a>
       <a class="nav-sec" href="../#changelog">Changelog</a>
       <a class="nav-dl" href="https://github.com/ilikemacos/universal-framefx/releases/download/v1.4.1-beta.9/Universal-FrameFX-1.4.1-beta.9-win-x64.zip">Download</a>
     </nav>
@@ -515,7 +515,7 @@
     <div class="wrap hero-grid">
       <div>
         <p class="verline">Experimental. New in Universal-FrameFX 1.4.1 Beta9</p>
-        <h1>WyneAI</h1>
+        <h1>WrenbyAI</h1>
         <p class="lede">The assistant built into Universal-FrameFX. Ask it anything, have it set up your games, and let it run FrameFX for you. It runs on your own PC, so your chats stay with you.</p>
       </div>
     </div>
@@ -538,7 +538,7 @@
     <div class="wrap grid">
       <h2 class="label">You stay in charge</h2>
       <div class="body prose">
-        <p>WyneAI asks before it does anything. Applying a preset, starting FrameFX or opening an app always shows a Confirm box first, with what will change. Press Cancel and nothing happens.</p>
+        <p>WrenbyAI asks before it does anything. Applying a preset, starting FrameFX or opening an app always shows a Confirm box first, with what will change. Press Cancel and nothing happens.</p>
       </div>
     </div>
   </section>
@@ -548,8 +548,8 @@
       <h2 class="label">Setup</h2>
       <div class="body prose">
         <p>1. Install Universal-FrameFX 1.4.1 Beta9 or later for Windows 10 or 11.</p>
-        <p>2. Click <strong>WyneAI (experimental)</strong> in the app. The first time, run <code>agent\scripts\Setup-FrameFXAgent.ps1</code> from the FrameFX folder. It's a one-time download of about 2 GB.</p>
-        <p>3. Chat in the app, or right here on this page while WyneAI is open in FrameFX.</p>
+        <p>2. Click <strong>WrenbyAI (experimental)</strong> in the app. The first time, run <code>agent\scripts\Setup-FrameFXAgent.ps1</code> from the FrameFX folder. It's a one-time download of about 2 GB.</p>
+        <p>3. Chat in the app, or right here on this page while WrenbyAI is open in FrameFX.</p>
       </div>
     </div>
   </section>
@@ -566,12 +566,12 @@
         <div class="chat">
           <div class="chat-log" id="log" aria-live="polite"></div>
           <form class="chat-form" id="form">
-            <textarea id="input" placeholder="Ask WyneAI anything" aria-label="Message"></textarea>
+            <textarea id="input" placeholder="Ask WrenbyAI anything" aria-label="Message"></textarea>
             <button class="chat-btn" id="send" type="submit">Send</button>
             <button class="chat-btn ghost" id="stop" type="button" hidden>Stop</button>
           </form>
         </div>
-        <p class="msg note" style="margin-top:10px">Chatting here is talk only. To set up games or run FrameFX, use WyneAI in the app.</p>
+        <p class="msg note" style="margin-top:10px">Chatting here is talk only. To set up games or run FrameFX, use WrenbyAI in the app.</p>
       </div>
     </div>
   </section>
@@ -588,10 +588,10 @@
 </footer>
 <script>
 (function () {
-  var SYSTEM = "You are WyneAI, the assistant built into the FrameFX app (frame generation and upscaling for PC games). " +
-    "In this web chat you have no tools: you can't change settings, start FrameFX or open apps; tell the user to use WyneAI in the app for that. " +
-    "If asked what model you are, say you are WyneAI made for FrameFX. Be concise.";
-  var NOT_RUNNING = "WyneAI isn't running. Open Universal-FrameFX, click WyneAI (experimental) and wait until it says it's ready, then try again.";
+  var SYSTEM = "You are WrenbyAI, the assistant built into the FrameFX app (frame generation and upscaling for PC games). " +
+    "In this web chat you have no tools: you can't change settings, start FrameFX or open apps; tell the user to use WrenbyAI in the app for that. " +
+    "If asked what model you are, say you are WrenbyAI made for FrameFX. Be concise.";
+  var NOT_RUNNING = "WrenbyAI isn't running. Open Universal-FrameFX, click WrenbyAI (experimental) and wait until it says it's ready, then try again.";
   var $ = function (id) { return document.getElementById(id); };
   var urlBox = $('url'), log = $('log'), input = $('input'), send = $('send'), stop = $('stop');
   var history = [], ctrl = null;
@@ -609,7 +609,7 @@
     try {
       var r = await fetch(base() + '/health', { cache: 'no-store' });
       if (r.ok) { setState(true, 'Connected'); return true; }
-      setState(false, r.status === 503 ? 'WyneAI is still starting' : 'Not connected');
+      setState(false, r.status === 503 ? 'WrenbyAI is still starting' : 'Not connected');
     } catch (e) { setState(false, 'Not connected'); }
     return false;
   }
@@ -620,7 +620,7 @@
     e.preventDefault();
     var text = input.value.trim(); if (!text || ctrl) return;
     input.value = ''; add('you', 'You', text); history.push({ role: 'user', content: text });
-    var out = add('ai', 'WyneAI', ''), reply = '';
+    var out = add('ai', 'WrenbyAI', ''), reply = '';
     ctrl = new AbortController(); send.disabled = true; stop.hidden = false;
     try {
       var r = await fetch(base() + '/v1/chat/completions', {
@@ -647,7 +647,7 @@
       else { history.pop(); out.parentNode.remove(); setState(false, 'Not connected'); add('note', '', NOT_RUNNING); }
     } finally { ctrl = null; send.disabled = false; stop.hidden = true; input.focus(); }
   };
-  add('note', '', 'Open WyneAI in Universal-FrameFX, then chat here.');
+  add('note', '', 'Open WrenbyAI in Universal-FrameFX, then chat here.');
   check();
 })();
 </script>
